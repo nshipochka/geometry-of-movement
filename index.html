@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8"/>
+
+	<link rel="stylesheet" type="text/css" href="mecho.css">
+	<script src="unicycle.js"></script>
+	<script src="person.js"></script>
+	<script src="mechoff.min.js"></script>
+
+	<script>
+		CAMERA_ANGLE = 0.2;
+		// Проект на Наделина Шипочка, ФН: 45771, специалност Информатика, група 3
+		// K35 - Моделът е изцяло направен от мен
+		// K44 - Прочетен е критерият
+
+		// Създава диск на pos - точка, с width - диаметър, height - височина, parent - родител и mMaterial - материал
+		function generateDisk(pos, width, height, parent, mMaterial = Mecho.GREEN)
+		{
+			var obj = disk(pos, width, height);
+			obj.parent = parent;
+			obj.material = mMaterial;
+			
+			return obj;
+		}
+
+		function main()
+		{
+			scene = new Mecho();
+			scene.ground = Mecho.WOOD;
+			scene.viewObject.alpha = Math.PI * (-1/2);
+			//scene.onTime = animate;
+
+			button('start', 's', start, 2);
+			button('show', 'v', switchView, 4, 3);
+
+			unicycle = new Unicycle([0,0,0])
+			frog = new Person(unicycle.getRiderPoint());
+
+			unicycle.getRightPedal();
+		}
+		
+		function animate(){
+
+			var t = Mecho.time;
+			//unicycle.animateMovement(t, 85);
+			frog.animateLegs(t, 75);
+			//scene.viewObject.alpha += Mecho.dTime/10;
+		}
+
+		function start(){
+			switch(this.state){
+				case 0: 
+					scene.onTime = null;
+					break;
+				case 1:
+					scene.onTime = animate;
+					break;
+			}
+		}
+
+		function switchView(){
+			switch (this.state) {
+				case 0:
+					scene.viewObject.alpha = Math.PI;
+					break;
+				case 1:
+					scene.viewObject.alpha = Math.PI * 2;
+					break;
+				case 2:
+					scene.viewObject.alpha = Math.PI * 1/2;
+					break;
+				case 3:
+					scene.viewObject.alpha = Math.PI * (-1/2);
+					break;
+    		}
+		}
+	</script>
+</head>
+
+<body onload="main()">
+	<h1>Каране на моноцикъл</h1>
+	<h2>45771</h2>
+</body>
