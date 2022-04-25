@@ -1,5 +1,5 @@
 BODYPART_DIAMETER = 0.5;
-WAIST_WIDTH = 1;
+WAIST_WIDTH = 1.5;
 
 TORSO_HEIGHT = 2.5;
 HEAD_POSITION = TORSO_HEIGHT/2 + BODYPART_DIAMETER
@@ -23,19 +23,24 @@ LEG_ROT_T = -LEG_ROT_H*1.25;
 
 FOOT_ROT_T = -20;
 
-class Person{
-    //По подадена начална точка създава човек, като тази точка се намира в центъра на кръста
-    constructor(pos, leftFoot, rightFoot){
-        // Измества точката нагоре, така че ако човекът се опира с външен обект
-        // в тази точка, да седне върху него, а не да се застъпват
-        pos[2] += BODYPART_DIAMETER/2;
+class Rider{
+    // По подадена начална точка създава колоездач с моноцикъл, като тази точка се намира на най-долната точка
+    // на гумата на моноцикъла
+    constructor(pos){
+        
+        this.unicycle = new Unicycle(pos);
+
+        // Измества точката за колоездач нагоре, така че да седне върху седалката на моноцикъла,
+        // а не да се застъпват
+        this.riderPoint = this.unicycle.seat.center;
+        this.riderPoint[2] += BODYPART_DIAMETER/2;
 
         // Кръста
-        this.waist = generateDisk(pos, BODYPART_DIAMETER, WAIST_WIDTH, null);
-        this.waist.rotV = 90; //horizontal
+        this.waist = generateDisk([0,0,BODYPART_DIAMETER/2], BODYPART_DIAMETER, WAIST_WIDTH, this.unicycle.seat);
+        this.waist.rotV = 90; 
         
         // Горна част на тялото
-        this.torso = generateDisk([TORSO_HEIGHT/2 + BODYPART_DIAMETER/2, 0, 0], WAIST_WIDTH, TORSO_HEIGHT, this.waist);
+        this.torso = generateDisk([TORSO_HEIGHT/2 + BODYPART_DIAMETER/2, 0, 0], BODYPART_DIAMETER*2, TORSO_HEIGHT, this.waist);
         this.torso.rotV = -90;
 
         this.head = ball([0, 0, HEAD_POSITION], BODYPART_DIAMETER * 2);
@@ -146,34 +151,35 @@ class Person{
         this.rightFoot.parent = this.rightFootJoint;
         this.rightFoot.material = Mecho.GREEN;
         this.rightFoot.centerOffset = [0, FOOT_LENGTH/4 ,0];
+
+        // this.leftLegJoint.rotH = - 50 + 20 * cos((this.unicycle.seat.rotT + this.unicycle.wheelTube.rotH + this.unicycle.leftCrank.rotH));
+		// this.leftCalfJoint.rotT = 80 - 35 * cos((this.unicycle.seat.rotT + this.unicycle.wheelTube.rotH + this.unicycle.leftCrank.rotH + 30));
+        // this.leftFootJoint.rotT = -10 + 10 * cos((this.unicycle.seat.rotT + this.unicycle.wheelTube.rotH + this.unicycle.leftCrank.rotH - 30));
+
+		// this.rightLegJoint.rotH = - 50 - 20 * cos((this.unicycle.seat.rotT + this.unicycle.wheelTube.rotH + this.unicycle.rightCrank.rotH));
+		// this.rightCalfJoint.rotT = + 80 + 35 * cos((this.unicycle.seat.rotT + this.unicycle.wheelTube.rotH + this.unicycle.rightCrank.rotH + 30));
+        // this.rightFootJoint.rotT = - 10 - 10 * cos((this.unicycle.seat.rotT + this.unicycle.wheelTube.rotH + this.unicycle.rightCrank.rotH - 30));
+    
+        // console.log("Cos: " + this.unicycle.wheelTube.rotH);
     }
 
     // Анимира движението на краката
-    animateLegs(t, speed, rotateAround, rotationDiameter){
-        var moveLeg = LEG_ROT_H * sin(t*speed);
-		if(moveLeg < 0.5){
-			moveLeg = - LEG_ROT_H * sin(t*speed);
-		}
+    animateLegs(t, speed){
 
-        var moveCalf = LEG_ROT_T * sin(t*speed);
-		if(moveCalf < 0.5){
-			moveCalf = - LEG_ROT_T * sin(t*speed);
-		}
-			
-        var moveFoot = FOOT_ROT_T * sin(t*speed);;
-        if(moveFoot < 0.5){
-			moveFoot = - FOOT_ROT_T * sin(t*speed);
-		}
+        this.unicycle.wheelTube.rotH = speed * t;
+       // this.unicycle.leftPedal.rotS = - 35 - speed * t;
+        //this.unicycle.rightPedal.rotS = 35 + speed * t;
 
-		// this.leftLegJoint.rotH = (-moveLeg);
-		// this.leftCalfJoint.rotT = moveCalf;// - 1/5*move;
-        // this.leftFootJoint.rotT = moveFoot;
+        this.crankRot = this.unicycle.seat.rotT + this.unicycle.wheelTube.rotH + this.unicycle.leftCrank.rotH;
+		this.leftLegJoint.rotH = - 50 + 20 * cos(this.crankRot * Math.PI / 180) //* Math.PI / 180;
+		this.leftCalfJoint.rotT = 80 - 35 * cos((this.crankRot + 30) * Math.PI / 180) //* Math.PI / 180;
+        this.leftFootJoint.rotT = -10 + 10 * cos((this.crankRot - 30) * Math.PI / 180) //* Math.PI / 180;
 
-		// this.rightLegJoint.rotH = (LEG_ROT_H + moveLeg);
-		// this.rightCalfJoint.rotT = LEG_ROT_T - moveCalf// - 1/5*move;
-        // this.rightFootJoint.rotT = FOOT_ROT_T + moveFoot;
+		this.rightLegJoint.rotH = - 50 - 20 * cos(this.crankRot * Math.PI / 180) //* Math.PI / 180;
+		this.rightCalfJoint.rotT = 80 + 35 * cos((this.crankRot + 30) * Math.PI / 180) //* Math.PI / 180;
+        this.rightFootJoint.rotT = -10 - 10 * cos((this.crankRot - 30) * Math.PI / 180) //* Math.PI / 180;
 
-        this.leftFootJoint.center.y = sin(t);
-        this.leftFootJoint.center.z = cos(t);
+        // this.leftFootJoint.center.y = sin(t);
+        // this.leftFootJoint.center.z = cos(t);
     }
 }

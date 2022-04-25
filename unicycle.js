@@ -9,7 +9,7 @@ SPOKE_WIDTH = 0.05;
 SPOKE_LENGTH = WHEEL_DIAMETER - 0.2;
 
 SEAT_HEIGHT = 0.2;
-SEATPOST_HEIGHT = 1.35;
+SEATPOST_HEIGHT = 1;
 
 FORK_WIDTH = WHEEL_WIDTH * 2;
 FORK_HEIGHT = 1.5;
@@ -45,6 +45,7 @@ class Unicycle{
 
         // Колело
         this.wheelTube = generateDisk([-FORK_HEIGHT,0,0], SMALL_TUBE_WIDTH, WHEELTUBE_LENGTH, this.forkTube, Mecho.BLACK);
+        this.wheelTube.rotH = 0;
 
         this.wheelBarrel = generateDisk([0,0,0], 0.3, 0.1, this.wheelTube, Mecho.METAL);
 
@@ -72,7 +73,7 @@ class Unicycle{
         this.leftCrank = generateDisk([0,0, WHEELTUBE_LENGTH/2], SMALL_TUBE_WIDTH, FORK_HEIGHT/2, this.wheelTube, Mecho.METAL);
         this.leftCrank.centerOffset = [0,0, -WHEELTUBE_LENGTH/2];
         this.leftCrank.rotV = 90;
-        this.leftCrank.rotH = 45;
+        this.leftCrank.rotH = 0;
 
         this.leftPedal = box([0,0,WHEELTUBE_LENGTH/2], 0.1, 0.3, 0.5);
         this.leftPedal.parent = this.leftCrank;
@@ -84,7 +85,7 @@ class Unicycle{
         this.rightCrank = generateDisk([0,0,-WHEELTUBE_LENGTH/2], SMALL_TUBE_WIDTH, FORK_HEIGHT/2, this.wheelTube, Mecho.METAL);
         this.rightCrank.centerOffset = [0,0,WHEELTUBE_LENGTH/2];
         this.rightCrank.rotV = 90;
-        this.rightCrank.rotH = 45;
+        this.rightCrank.rotH = 360 - this.leftCrank.rotH;
 
         this.rightPedal = box([0,0,-WHEELTUBE_LENGTH/2], 0.1, 0.3, 0.5);
         this.rightPedal.parent = this.rightCrank;
@@ -94,25 +95,39 @@ class Unicycle{
     }
 
     // Връща точка на върха на седалката, където трябва да седне колкоездачът
-    getRiderPoint(){
+    get riderPoint(){
         var personPos = [this.pos[0], this.pos[1], this.pos[2]];
         personPos[2] += SEAT_HEIGHT/2;
 
         return personPos;
     }
 
-    getLeftPedal(){
+    get leftPedalPoint(){
         var leftPedalPos = this.leftPedal.center;
-        console.log(leftPedalPos);
+        //console.log(leftPedalPos);
 
         return leftPedalPos;
     }
 
-    getRightPedal(){
+    get rightPedalPoint(){
         var rightPedalPos = this.rightPedal.center;
-        console.log(rightPedalPos);
+        //console.log(rightPedalPos);
 
         return rightPedalPos;
+    }
+
+    get wheelBarrelPoint(){
+        var wheelBarrelPos = this.wheelBarrel.center;
+
+        return wheelBarrelPos;
+    }
+
+    get leftCrankAngle(){
+        return this.wheelTube.rotH + this.leftCrank.rotH;
+    }
+
+    get rightCrankAngle(){
+        return this.wheelTube.rotH + this.leftCrank.rotH;
     }
 
     // Анимира въртенето на моноцикъла

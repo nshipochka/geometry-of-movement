@@ -5,7 +5,7 @@
 
 	<link rel="stylesheet" type="text/css" href="mecho.css">
 	<script src="unicycle.js"></script>
-	<script src="person.js"></script>
+	<script src="rider.js"></script>
 	<script src="mechoff.min.js"></script>
 
 	<script>
@@ -34,17 +34,17 @@
 			button('start', 's', start, 2);
 			button('show', 'v', switchView, 4, 3);
 
-			unicycle = new Unicycle([0,0,0])
-			frog = new Person(unicycle.getRiderPoint());
+			//unicycle = new Unicycle([0,0,0])
+			frog = new Rider([0,0,0]);
 
-			unicycle.getRightPedal();
+			//unicycle.getRightPedal();
 		}
 		
 		function animate(){
 
 			var t = Mecho.time;
-			unicycle.animateMovement(t, 85);
-			frog.animateLegs(t, 0.9);
+			//unicycle.animateMovement(t, 85);
+			frog.animateLegs(t, 60);
 			//scene.viewObject.alpha += Mecho.dTime/10;
 		}
 
