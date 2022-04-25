@@ -9,6 +9,8 @@ ARM_LENGTH = 1;
 
 LEG_LENGTH = 1.75;
 
+FOOT_LENGTH = BODYPART_DIAMETER * 2;
+
 ARM_ROT_V = 50;
 ARM_ROT_H = 20;
 
@@ -16,12 +18,14 @@ FOREARM_ROT_V = 20;
 FOREARM_ROT_H = 30;
 FOREARM_ROT_T = 20;
 
-LEG_ROT_H = -75;
+LEG_ROT_H = -73;
 LEG_ROT_T = -LEG_ROT_H*1.25;
+
+FOOT_ROT_T = -20;
 
 class Person{
     //По подадена начална точка създава човек, като тази точка се намира в центъра на кръста
-    constructor(pos){
+    constructor(pos, leftFoot, rightFoot){
         // Измества точката нагоре, така че ако човекът се опира с външен обект
         // в тази точка, да седне върху него, а не да се застъпват
         pos[2] += BODYPART_DIAMETER/2;
@@ -99,6 +103,16 @@ class Person{
 
         this.leftCalf = generateDisk([0,0,LEG_LENGTH/2], BODYPART_DIAMETER, LEG_LENGTH, this.leftCalfJoint);
 
+        // Ляво стъпало
+        this.leftFootJoint = ball([0, 0, LEG_LENGTH/2], BODYPART_DIAMETER);
+        this.leftFootJoint.parent = this.leftCalf;
+        this.leftFootJoint.material = Mecho.BLUE;
+
+        this.leftFoot = box([0, 0, BODYPART_DIAMETER/2], BODYPART_DIAMETER, FOOT_LENGTH, 0.2);
+        this.leftFoot.parent = this.leftFootJoint;
+        this.leftFoot.material = Mecho.GREEN;
+        this.leftFoot.centerOffset = [0, FOOT_LENGTH/4 ,0];
+
         // Десен
         this.rightLegJoint = ball([0, 0, -WAIST_WIDTH/2], BODYPART_DIAMETER);
         this.rightLegJoint.parent = this.waist;
@@ -112,7 +126,7 @@ class Person{
         this.rightCalfJoint = ball([0, 0, LEG_LENGTH/2], BODYPART_DIAMETER);
         this.rightCalfJoint.parent = this.rightLeg;
         this.rightCalfJoint.material = Mecho.BLUE;
-        //this.rightCalfJoint.rotT = -LEG_ROT_T;
+        this.rightCalfJoint.rotT = LEG_ROT_T;
 
         this.testerHorizontal = generateDisk([0,0,0], 0.2, 2, this.rightCalfJoint, Mecho.METAL);
         this.testerHorizontal.rotV = 90;
@@ -121,21 +135,45 @@ class Person{
         this.testerVertical.rotT = 90;
     
         this.rightCalf = generateDisk([0, 0, LEG_LENGTH/2], BODYPART_DIAMETER, LEG_LENGTH, this.rightCalfJoint);
+
+        // Дясно стъпало
+        this.rightFootJoint = ball([0, 0, LEG_LENGTH/2], BODYPART_DIAMETER);
+        this.rightFootJoint.parent = this.rightCalf;
+        this.rightFootJoint.material = Mecho.BLUE;
+        this.rightFootJoint.rotT = FOOT_ROT_T;
+
+        this.rightFoot = box([0, 0, BODYPART_DIAMETER/2], BODYPART_DIAMETER, FOOT_LENGTH, 0.2);
+        this.rightFoot.parent = this.rightFootJoint;
+        this.rightFoot.material = Mecho.GREEN;
+        this.rightFoot.centerOffset = [0, FOOT_LENGTH/4 ,0];
     }
 
     // Анимира движението на краката
-    animateLegs(t, speed){
-        var move = LEG_ROT_H * sin(t*3/4);
-		if(move < 0.5){
-			move = - LEG_ROT_H * sin(t*3/4);
+    animateLegs(t, speed, rotateAround, rotationDiameter){
+        var moveLeg = LEG_ROT_H * sin(t*speed);
+		if(moveLeg < 0.5){
+			moveLeg = - LEG_ROT_H * sin(t*speed);
+		}
+
+        var moveCalf = LEG_ROT_T * sin(t*speed);
+		if(moveCalf < 0.5){
+			moveCalf = - LEG_ROT_T * sin(t*speed);
 		}
 			
-		this.leftLegJoint.rotH = (-move);
-		this.leftCalfJoint.rotT = -this.leftLegJoint.rotH;// - 1/5*move;
+        var moveFoot = FOOT_ROT_T * sin(t*speed);;
+        if(moveFoot < 0.5){
+			moveFoot = - FOOT_ROT_T * sin(t*speed);
+		}
 
-		this.rightLegJoint.rotH = (LEG_ROT_H + move);
-		this.rightCalfJoint.rotT = -LEG_ROT_H + this.leftLegJoint.rotH;// - 1/5*move;
-        //this.rightCalfJoint.center.x = sin(t);
-        //this.rightCalfJoint.center.y = cos(t);
+		// this.leftLegJoint.rotH = (-moveLeg);
+		// this.leftCalfJoint.rotT = moveCalf;// - 1/5*move;
+        // this.leftFootJoint.rotT = moveFoot;
+
+		// this.rightLegJoint.rotH = (LEG_ROT_H + moveLeg);
+		// this.rightCalfJoint.rotT = LEG_ROT_T - moveCalf// - 1/5*move;
+        // this.rightFootJoint.rotT = FOOT_ROT_T + moveFoot;
+
+        this.leftFootJoint.center.y = sin(t);
+        this.leftFootJoint.center.z = cos(t);
     }
 }
