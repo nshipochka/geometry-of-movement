@@ -79,7 +79,7 @@ class Unicycle{
         this.leftPedal.parent = this.leftCrank;
         this.leftPedal.material = Mecho.BLACK;
         this.leftPedal.rotV = -90;
-        this.leftPedal.rotS = -35;
+        this.leftPedal.rotS = 35;
         
         // Десен
         this.rightCrank = generateDisk([0,0,-WHEELTUBE_LENGTH/2], SMALL_TUBE_WIDTH, FORK_HEIGHT/2, this.wheelTube, Mecho.METAL);
@@ -91,7 +91,7 @@ class Unicycle{
         this.rightPedal.parent = this.rightCrank;
         this.rightPedal.material = Mecho.BLACK;
         this.rightPedal.rotV = 90;
-        this.rightPedal.rotS = 35;
+        this.rightPedal.rotS = -35;
     }
 
     // Връща точка на върха на седалката, където трябва да седне колкоездачът
