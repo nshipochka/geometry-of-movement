@@ -29,23 +29,20 @@
 			scene = new Mecho();
 			scene.ground = Mecho.WOOD;
 			scene.viewObject.alpha = Math.PI * (-1/2);
-			//scene.onTime = animate;
 
-			button('start', 's', start, 2);
-			button('show', 'v', switchView, 4, 3);
-
-			//unicycle = new Unicycle([0,0,0])
 			frog = new Rider([0,0,0]);
 
-			//unicycle.getRightPedal();
+			button('two', 't', speedUp, 3, 1);
+			button('start', 's', start, 2);
+			button('show', 'v', switchView, 4, 3);
 		}
 		
 		function animate(){
 
 			var t = Mecho.time;
-			//unicycle.animateMovement(t, 85);
-			frog.animateLegs(t, 60);
-			//scene.viewObject.alpha += Mecho.dTime/10;
+
+			frog.animateLegs(t);
+			frog.animateTorso(t);
 		}
 
 		function start(){
@@ -74,6 +71,21 @@
 					scene.viewObject.alpha = Math.PI * (-1/2);
 					break;
     		}
+		}
+
+		function speedUp(){
+			console.log("Speed Up otside switch: " + this.state);
+			switch (this.state) {
+				case 0:
+					frog.speed = 40;
+					break;
+				case 1:
+					frog.speed = 80;
+					break;
+				case 2:
+					frog.speed = 120;
+					break;
+			}
 		}
 	</script>
 </head>

@@ -73,7 +73,7 @@ class Unicycle{
         this.leftCrank = generateDisk([0,0, WHEELTUBE_LENGTH/2], SMALL_TUBE_WIDTH, FORK_HEIGHT/2, this.wheelTube, Mecho.METAL);
         this.leftCrank.centerOffset = [0,0, -WHEELTUBE_LENGTH/2];
         this.leftCrank.rotV = 90;
-        this.leftCrank.rotH = 0;
+        this.leftCrank.rotH = 30;
 
         this.leftPedal = box([0,0,WHEELTUBE_LENGTH/2], 0.1, 0.3, 0.5);
         this.leftPedal.parent = this.leftCrank;
@@ -85,7 +85,7 @@ class Unicycle{
         this.rightCrank = generateDisk([0,0,-WHEELTUBE_LENGTH/2], SMALL_TUBE_WIDTH, FORK_HEIGHT/2, this.wheelTube, Mecho.METAL);
         this.rightCrank.centerOffset = [0,0,WHEELTUBE_LENGTH/2];
         this.rightCrank.rotV = 90;
-        this.rightCrank.rotH = 360 - this.leftCrank.rotH;
+        this.rightCrank.rotH = 360 + this.leftCrank.rotH;
 
         this.rightPedal = box([0,0,-WHEELTUBE_LENGTH/2], 0.1, 0.3, 0.5);
         this.rightPedal.parent = this.rightCrank;
@@ -100,26 +100,6 @@ class Unicycle{
         personPos[2] += SEAT_HEIGHT/2;
 
         return personPos;
-    }
-
-    get leftPedalPoint(){
-        var leftPedalPos = this.leftPedal.center;
-        //console.log(leftPedalPos);
-
-        return leftPedalPos;
-    }
-
-    get rightPedalPoint(){
-        var rightPedalPos = this.rightPedal.center;
-        //console.log(rightPedalPos);
-
-        return rightPedalPos;
-    }
-
-    get wheelBarrelPoint(){
-        var wheelBarrelPos = this.wheelBarrel.center;
-
-        return wheelBarrelPos;
     }
 
     get leftCrankAngle(){
