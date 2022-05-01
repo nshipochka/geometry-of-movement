@@ -21,11 +21,11 @@ class Unicycle{
     constructor(pos){
         
         // Измества точката, така че начална точка да е на нивото на седалката
-        this.pos = pos;
-        this.pos[2] += WHEEL_DIAMETER/2 + FORK_HEIGHT + SEATPOST_HEIGHT + SEAT_HEIGHT/2;
+        this.seatPoint = [pos[0], pos[1], pos[2]]; //Така копираме стойността на точката, но взимаме същата памет
+        this.seatPoint[2] += WHEEL_DIAMETER/2 + FORK_HEIGHT + SEATPOST_HEIGHT + SEAT_HEIGHT/2;
         
         // Седалка
-        this.seat = generateDisk(pos, 0.5, SEAT_HEIGHT, null, Mecho.BLACK);
+        this.seat = generateDisk(this.seatPoint, 0.5, SEAT_HEIGHT, null, Mecho.BLACK);
         this.seat2 = generateDisk([0, -0.3, 0], 0.3, SEAT_HEIGHT, this.seat, Mecho.BLACK);
         this.seat3 = generateDisk([0, -0.2, 0], 0.3, SEAT_HEIGHT, this.seat2, Mecho.BLACK);
 
@@ -79,7 +79,8 @@ class Unicycle{
         this.leftPedal.parent = this.leftCrank;
         this.leftPedal.material = Mecho.BLACK;
         this.leftPedal.rotV = -90;
-        this.leftPedal.rotS = 35;
+        this.leftPedal.rotS = 45 - this.leftCrankRot;
+        
         
         // Десен
         this.rightCrank = generateDisk([0,0,-WHEELTUBE_LENGTH/2], SMALL_TUBE_WIDTH, FORK_HEIGHT/2, this.wheelTube, Mecho.METAL);
@@ -91,29 +92,14 @@ class Unicycle{
         this.rightPedal.parent = this.rightCrank;
         this.rightPedal.material = Mecho.BLACK;
         this.rightPedal.rotV = 90;
-        this.rightPedal.rotS = -35;
+        this.rightPedal.rotS = - 45 + this.rightCrankRot;
     }
 
-    // Връща точка на върха на седалката, където трябва да седне колкоездачът
-    get riderPoint(){
-        var personPos = [this.pos[0], this.pos[1], this.pos[2]];
-        personPos[2] += SEAT_HEIGHT/2;
-
-        return personPos;
+    get leftCrankRot(){
+        return this.seat.rotT + this.wheelTube.rotH + this.leftCrank.rotH;
     }
 
-    get leftCrankAngle(){
-        return this.wheelTube.rotH + this.leftCrank.rotH;
-    }
-
-    get rightCrankAngle(){
-        return this.wheelTube.rotH + this.leftCrank.rotH;
-    }
-
-    // Анимира въртенето на моноцикъла
-    animateMovement(t, speed){
-        this.wheelTube.rotH = speed * t;
-        this.leftPedal.rotS = -35 - speed * t;
-        this.rightPedal.rotS = 35 + speed * t;
+    get rightCrankRot(){
+        return this.seat.rotT + this.wheelTube.rotH + this.rightCrank.rotH;
     }
 }

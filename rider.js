@@ -35,17 +35,17 @@ class Rider{
 
         // Измества точката за колоездач нагоре, така че да седне върху седалката на моноцикъла,
         // а не да се застъпват
-        this.riderPoint = this.unicycle.seat.center;
-        this.riderPoint[2] += BODYPART_DIAMETER/2;
+        this.riderPoint = [pos[0], pos[1], pos[2]];
+        this.riderPoint[2] += BODYPART_DIAMETER/2 + SEAT_HEIGHT/2;
 
         // Кръста
-        this.waist = generateDisk([0,0,BODYPART_DIAMETER/2], BODYPART_DIAMETER, WAIST_WIDTH, this.unicycle.seat);
+        this.waist = generateDisk(this.riderPoint, BODYPART_DIAMETER, WAIST_WIDTH, this.unicycle.seat);
         this.waist.rotV = 90; 
         this.waist.rotS = 5;
 
         this.waistJoint = ball([BODYPART_DIAMETER,0,0], BODYPART_DIAMETER * 2);
         this.waistJoint.parent = this.waist;
-        this.waistJoint.material = Mecho.BLUE;
+        this.waistJoint.material = Mecho.GREEN;
         
         // Горна част на тялото
         this.torso = generateDisk([TORSO_HEIGHT/2, 0, 0], BODYPART_DIAMETER*2, TORSO_HEIGHT, this.waistJoint);
@@ -62,7 +62,7 @@ class Rider{
         // Лява 
         this.leftArmJoint = ball([0, 0, SHOULDER_WIDTH/2], BODYPART_DIAMETER);
         this.leftArmJoint.parent = this.shoulders;
-        this.leftArmJoint.material = Mecho.BLUE;
+        this.leftArmJoint.material = Mecho.GREEN;
         this.leftArmJoint.rotV = -ARM_ROT_V;
         this.leftArmJoint.rotH = -ARM_ROT_H;
 
@@ -72,7 +72,7 @@ class Rider{
         // Лява предмишница
         this.leftForearmJoint = ball([0, 0, ARM_LENGTH/2], BODYPART_DIAMETER);
         this.leftForearmJoint.parent = this.leftArm;
-        this.leftForearmJoint.material = Mecho.BLUE;
+        this.leftForearmJoint.material = Mecho.GREEN;
         this.leftForearmJoint.rotV = -FOREARM_ROT_V;
         this.leftForearmJoint.rotH = FOREARM_ROT_H;
         this.leftForearmJoint.rotT = -FOREARM_ROT_T;
@@ -82,7 +82,7 @@ class Rider{
         // Дясна
         this.rightArmJoint = ball([0, 0, -SHOULDER_WIDTH/2], BODYPART_DIAMETER);
         this.rightArmJoint.parent = this.shoulders;
-        this.rightArmJoint.material = Mecho.BLUE;
+        this.rightArmJoint.material = Mecho.GREEN;
         this.rightArmJoint.rotV = ARM_ROT_V;
         this.rightArmJoint.rotH = -ARM_ROT_H;
 
@@ -92,7 +92,7 @@ class Rider{
         // Дясна предмишница
         this.rightForearmJoint = ball([0, 0, -ARM_LENGTH/2], BODYPART_DIAMETER);
         this.rightForearmJoint.parent = this.rightArm;
-        this.rightForearmJoint.material = Mecho.BLUE;
+        this.rightForearmJoint.material = Mecho.GREEN;
         this.rightForearmJoint.rotV = FOREARM_ROT_V;
         this.rightForearmJoint.rotH = FOREARM_ROT_H;
         this.rightForearmJoint.rotT = FOREARM_ROT_T;
@@ -103,7 +103,7 @@ class Rider{
         // Ляв
         this.leftLegJoint = ball([0, 0, WAIST_WIDTH/2], BODYPART_DIAMETER);
         this.leftLegJoint.parent = this.waist;
-        this.leftLegJoint.material = Mecho.BLUE;
+        this.leftLegJoint.material = Mecho.GREEN;
 
         this.leftLeg = generateDisk([-LEG_LENGTH/2, 0, 0], BODYPART_DIAMETER, LEG_LENGTH, this.leftLegJoint);
         this.leftLeg.rotV = 90;
@@ -111,26 +111,29 @@ class Rider{
         // Ляв прасец
         this.leftCalfJoint = ball([0, 0, LEG_LENGTH/2], BODYPART_DIAMETER);
         this.leftCalfJoint.parent = this.leftLeg;
-        this.leftCalfJoint.material = Mecho.BLUE;
-        //this.leftCalfJoint.rotT = -LEG_ROT_H*1.25;
+        this.leftCalfJoint.material = Mecho.GREEN;
 
         this.leftCalf = generateDisk([0,0,LEG_LENGTH/2], BODYPART_DIAMETER, LEG_LENGTH, this.leftCalfJoint);
 
         // Ляво стъпало
         this.leftFootJoint = ball([0, 0, LEG_LENGTH/2], BODYPART_DIAMETER);
         this.leftFootJoint.parent = this.leftCalf;
-        this.leftFootJoint.material = Mecho.BLUE;
+        this.leftFootJoint.material = Mecho.GREEN;
 
         this.leftFoot = box([0, 0, BODYPART_DIAMETER/2], BODYPART_DIAMETER, FOOT_LENGTH, 0.2);
         this.leftFoot.parent = this.leftFootJoint;
         this.leftFoot.material = Mecho.GREEN;
-        this.leftFoot.centerOffset = [0, FOOT_LENGTH/4 ,0];
+        this.leftFoot.imageOffset = [0, -FOOT_LENGTH/4 ,0];
+
+        //Свиване на левия крак, така че да е върху педала
+        this.leftLegJoint.rotH = -50 + 20 * cos(this.unicycle.leftCrankRot * Math.PI / 180); 
+		this.leftCalfJoint.rotT = 80 - 35 * cos((this.unicycle.leftCrankRot + 30) * Math.PI / 180);
+        this.leftFootJoint.rotT = -10 + 10 * cos((this.unicycle.leftCrankRot - 30) * Math.PI / 180);
 
         // Десен
         this.rightLegJoint = ball([0, 0, -WAIST_WIDTH/2], BODYPART_DIAMETER);
         this.rightLegJoint.parent = this.waist;
-        this.rightLegJoint.material = Mecho.BLUE;
-        this.rightLegJoint.rotH = LEG_ROT_H;
+        this.rightLegJoint.material = Mecho.GREEN;
 
         this.rightLeg = generateDisk([-LEG_LENGTH/2, 0, 0], BODYPART_DIAMETER, LEG_LENGTH, this.rightLegJoint);
         this.rightLeg.rotV = 90;
@@ -138,54 +141,40 @@ class Rider{
         // Десен прасец
         this.rightCalfJoint = ball([0, 0, LEG_LENGTH/2], BODYPART_DIAMETER);
         this.rightCalfJoint.parent = this.rightLeg;
-        this.rightCalfJoint.material = Mecho.BLUE;
-        this.rightCalfJoint.rotT = LEG_ROT_T;
-
-        this.testerHorizontal = generateDisk([0,0,0], 0.2, 2, this.rightCalfJoint, Mecho.METAL);
-        this.testerHorizontal.rotV = 90;
-
-        this.testerVertical = generateDisk([0,0,0], 0.2, 2, this.rightCalfJoint, Mecho.INDUSTRIAL);
-        this.testerVertical.rotT = 90;
+        this.rightCalfJoint.material = Mecho.GREEN;
     
         this.rightCalf = generateDisk([0, 0, LEG_LENGTH/2], BODYPART_DIAMETER, LEG_LENGTH, this.rightCalfJoint);
 
         // Дясно стъпало
         this.rightFootJoint = ball([0, 0, LEG_LENGTH/2], BODYPART_DIAMETER);
         this.rightFootJoint.parent = this.rightCalf;
-        this.rightFootJoint.material = Mecho.BLUE;
-        this.rightFootJoint.rotT = FOOT_ROT_T;
+        this.rightFootJoint.material = Mecho.GREEN;
 
         this.rightFoot = box([0, 0, BODYPART_DIAMETER/2], BODYPART_DIAMETER, FOOT_LENGTH, 0.2);
         this.rightFoot.parent = this.rightFootJoint;
         this.rightFoot.material = Mecho.GREEN;
-        this.rightFoot.centerOffset = [0, FOOT_LENGTH/4 ,0];
+        this.rightFoot.imageOffset = [0, -FOOT_LENGTH/4 ,0];
 
-        // this.leftLegJoint.rotH = - 50 + 20 * cos((this.unicycle.seat.rotT + this.unicycle.wheelTube.rotH + this.unicycle.leftCrank.rotH));
-		// this.leftCalfJoint.rotT = 80 - 35 * cos((this.unicycle.seat.rotT + this.unicycle.wheelTube.rotH + this.unicycle.leftCrank.rotH + 30));
-        // this.leftFootJoint.rotT = -10 + 10 * cos((this.unicycle.seat.rotT + this.unicycle.wheelTube.rotH + this.unicycle.leftCrank.rotH - 30));
-
-		// this.rightLegJoint.rotH = - 50 - 20 * cos((this.unicycle.seat.rotT + this.unicycle.wheelTube.rotH + this.unicycle.rightCrank.rotH));
-		// this.rightCalfJoint.rotT = + 80 + 35 * cos((this.unicycle.seat.rotT + this.unicycle.wheelTube.rotH + this.unicycle.rightCrank.rotH + 30));
-        // this.rightFootJoint.rotT = - 10 - 10 * cos((this.unicycle.seat.rotT + this.unicycle.wheelTube.rotH + this.unicycle.rightCrank.rotH - 30));
-    
-        // console.log("Cos: " + this.unicycle.wheelTube.rotH);
+        //Свиване на десния крак, така че да е върху педала
+        this.rightLegJoint.rotH = -65 - 20 * cos((this.unicycle.rightCrankRot) * Math.PI / 180);
+		this.rightCalfJoint.rotT = 90 + 35 * cos((this.unicycle.rightCrankRot - 10) * Math.PI / 180);
+        this.rightFootJoint.rotT = -10 - 10 * cos((this.unicycle.rightCrankRot - 15) * Math.PI / 180);
     }
 
     // Анимира движението на краката
-    animateLegs(t){
-
+    animateLegs(t){   
         this.unicycle.wheelTube.rotH = this.speed * t;
-        this.unicycle.leftPedal.rotS = 20 - this.speed * t;
-        this.unicycle.rightPedal.rotS = - 20 + this.speed * t;
 
-        this.crankRot = this.unicycle.seat.rotT + this.unicycle.wheelTube.rotH + this.unicycle.leftCrank.rotH;
-		this.leftLegJoint.rotH = -50 + 20 * cos(this.crankRot * Math.PI / 180) //* Math.PI / 180;
-		this.leftCalfJoint.rotT = 80 - 35 * cos((this.crankRot + 30) * Math.PI / 180) //* Math.PI / 180;
-        this.leftFootJoint.rotT = -10 + 10 * cos((this.crankRot - 30) * Math.PI / 180) //* Math.PI / 180;
-
-		this.rightLegJoint.rotH = -50 - 20 * cos(this.crankRot * Math.PI / 180) //* Math.PI / 180;
-		this.rightCalfJoint.rotT = 80 + 35 * cos((this.crankRot + 30) * Math.PI / 180) //* Math.PI / 180;
-        this.rightFootJoint.rotT = -10 - 10 * cos((this.crankRot - 30) * Math.PI / 180) //* Math.PI / 180;
+        this.leftLegJoint.rotH = -50 + 20 * cos(this.unicycle.leftCrankRot * Math.PI / 180);
+		this.leftCalfJoint.rotT = 80 - 35 * cos((this.unicycle.leftCrankRot + 30) * Math.PI / 180); 
+        this.leftFootJoint.rotT = -10 + 10 * cos((this.unicycle.leftCrankRot - 30) * Math.PI / 180);
+		
+        this.rightLegJoint.rotH = -50 - 20 * cos(this.unicycle.rightCrankRot * Math.PI / 180); 
+		this.rightCalfJoint.rotT = 80 + 35 * cos((this.unicycle.rightCrankRot + 30) * Math.PI / 180); 
+        this.rightFootJoint.rotT = -10 - 10 * cos((this.unicycle.rightCrankRot - 30) * Math.PI / 180);
+    
+        this.unicycle.leftPedal.rotS = 45 - this.unicycle.leftCrankRot;
+        this.unicycle.rightPedal.rotS = - 45 + this.unicycle.rightCrankRot;
     }
 
     animateTorso(t){

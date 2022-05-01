@@ -15,8 +15,7 @@
 		// K44 - Прочетен е критерият
 
 		// Създава диск на pos - точка, с width - диаметър, height - височина, parent - родител и mMaterial - материал
-		function generateDisk(pos, width, height, parent, mMaterial = Mecho.GREEN)
-		{
+		function generateDisk(pos, width, height, parent, mMaterial = Mecho.GREEN){
 			var obj = disk(pos, width, height);
 			obj.parent = parent;
 			obj.material = mMaterial;
@@ -24,21 +23,20 @@
 			return obj;
 		}
 
-		function main()
-		{
+		function main(){
 			scene = new Mecho();
-			scene.ground = Mecho.WOOD;
+			scene.sky = [0.75, 0.90, 1];
+			scene.ground = Mecho.ASPHALT;
 			scene.viewObject.alpha = Math.PI * (-1/2);
 
 			frog = new Rider([0,0,0]);
 
-			button('two', 't', speedUp, 3, 1);
 			button('start', 's', start, 2);
+			button('two', 't', speedUp, 3, 1);
 			button('show', 'v', switchView, 4, 3);
 		}
 		
 		function animate(){
-
 			var t = Mecho.time;
 
 			frog.animateLegs(t);
@@ -74,7 +72,6 @@
 		}
 
 		function speedUp(){
-			console.log("Speed Up otside switch: " + this.state);
 			switch (this.state) {
 				case 0:
 					frog.speed = 40;
